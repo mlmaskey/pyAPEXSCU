@@ -5,7 +5,20 @@
 -- C: Calibration
 -- U: Uncertainty Analysis
 
-# Basic Linux Commands for Parallel Computation
+## Introduction
+## List of files and folder
+
+* Main folder: `pyAPEX`
+    * Preogram folder: `Program`
+      * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY, etc.
+      * Calibration data file: `calibration_data.csv.`  
+      * APEX editor spreadsheet: `xlsAPPXgraze??.xlsm.`
+        
+    * Utility folder: `Utility`
+
+## Utilities
+
+### Basic Linux Commands for Parallel Computation
 * List the contents in the folder: `ls` if you are in; `ls [folder_path]` if you are outside the folder.
 * Check the full path of folder you are in, use `pwd.`
 * Read the content of a file: `cat [file_name]`
