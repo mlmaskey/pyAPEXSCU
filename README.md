@@ -5,19 +5,34 @@
 -- C: Calibration
 -- U: Uncertainty Analysis
 
-## Introduction
-## List of files and folder
+**Authors**: *Mahesh Lal Maskey*, *Amanda M. Nelson*, *Haitao Huang*, and *Briain Stucky*
 
-* Main folder: `pyAPEX`
+**Contributors**: *Daniel N. Moriasi*, and *Brian Northup*
+
+## Introduction
+## File Structure
+* Main folder: **`pyAPEX`**
     * Preogram folder: `Program`
       * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY, etc.
       * Calibration data file: `calibration_data.csv.`  
-      * APEX editor spreadsheet: `xlsAPPXgraze??.xlsm.`
-        
-    * Utility folder: `Utility`
-
+      * APEX editor spreadsheet: `xlsAPPXgraze??.xlsm.`        
+    * Utility folder: `Utility` contining utility files used in the pre and post analysis of parameters, statsistics
+ * Main files:
+    * pyAPEXSCU.py: Main script built for calibration, senstivity and  uncertainty analysis
+    * pyAPEXin.py: Contains class `inAPEX` that stores the `APEX` parameters from `Program` folder
+    * pyCALAPEX.py: Contains class colled `calAPEX` devoted to calibration after running the program certain iterations specified in`runtime.ini` 
+    * pySAAPEX.py: Contains class called `senanaAPEX` devoted to sensitivity analysis 
+    * pyUAAPEX.py: Contains class called `unaAPEX` devoted to uncertainty analysis 
+    * runtime.ini: Sets the runtime parameters like number of iterations, output location, range of parameter space.
+    * sensitivity_analysis.py: Calls `Python` script `pySAAPEX.py` for sensitivity analysis 
+    * task_worker.py: Batch script used for jobs
+    * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis 
 ## Utilities
-
+## Steps for (un) parallel computation
+### Calibration
+### Senstivity analysis
+### Uncertainty analysis
+### Usage of batch script
 ### Basic Linux Commands for Parallel Computation
 * List the contents in the folder: `ls` if you are in; `ls [folder_path]` if you are outside the folder.
 * Check the full path of folder you are in, use `pwd.`
