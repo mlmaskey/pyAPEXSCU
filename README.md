@@ -7,5 +7,4 @@
 
 # Basic Linux Code for Parallel Computation
     To count the number of file by specifif extenstion:
-    <pre><code> find ./Output_*/ -name "daily_outlet_*.csv" -printf '.' | wc -m~
-    </code></pre>
+    `find ./Output_*/ -name "daily_outlet_*.csv" -printf '.' | wc -m~`
