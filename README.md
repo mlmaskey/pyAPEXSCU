@@ -24,9 +24,10 @@
     * pySAAPEX.py: Contains class called `senanaAPEX` devoted to sensitivity analysis 
     * pyUAAPEX.py: Contains class called `unaAPEX` devoted to uncertainty analysis 
     * runtime.ini: Sets the runtime parameters like number of iterations, output location, range of parameter space.
+    * calibration.py: Calls `Python` script `pyCALAPEX.py` for calibration after completing the iteration, including filtering parameter sets based on the `MORIASI CRITERIA` and finds best set
     * sensitivity_analysis.py: Calls `Python` script `pySAAPEX.py` for sensitivity analysis 
     * task_worker.py: Batch script used for jobs
-    * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis 
+    * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis
 ## Utilities
 ## Steps for (un) parallel computation
 ### Calibration
