@@ -29,6 +29,14 @@
     * task_worker.py: Batch script used for jobs
     * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis
 ## Utilities
+   * The folder `post_scripts` should be independent of the `pyAPEX` folder and includes scripts for post processing, including making graphs, summarizing tables and so on.
+   * If there is single project you cam merge these scripts with main folder `pyAPEX.` Otherwise, it is suggested to put in outside the project folder.
+## File Organization
+   * Create a project folder **APEX_project**
+   * Create sub folders for different sites inside the prohect folders, e.g., `SITE1`, `SITE2` ... 
+   * Create sub folders for each scenarios inside `SITE#` folder, e.g., 'pyAPEX_scn1`, 'pyAPEX_scn2`, ...
+   * Copy main folder **`pyAPEX`** into each scenario folder simulatenously
+   * Copy `post_scripts` folder into the main project folder
 ## Steps for (un) parallel computation
 ### Calibration
 ### Senstivity analysis
