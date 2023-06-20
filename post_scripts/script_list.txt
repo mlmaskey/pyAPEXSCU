@@ -1,0 +1,23 @@
+summarize.calibration.attributes.py: extracts the summary of response variables throughout the calibration and validation.
+export.uncertainty.summary.py:       exports the response variables based on calibration and uncertainty analysis after summarizing annually.
+export.calibration.summary.all.py:  summarizes the response variables annually over the simulation period.
+summarize.uncertainty.loglikelihood.py: calculates and  summarizes loglikelihood from uncertainty analysis
+export_uncertainty_rv_summary.py: summarizes the response variables annually over the simulation period by farm wise
+plt.calibration_water_balance.py:  plots the water balance components over the simulation period at monthly scale
+plt.calibration.crop_yield.py: plots bar chart of crop yield over the simulation period
+plt.calibration.biomass.py: plots inter annual dynamics of crop biomass over the simulation period
+plt.uncertainty.ts.nutrients.py: plots uncertainty range in time series for nitrogen and phosphorus
+plt.uncertainty.boxplot.yield.py: plots box plots for uncertainty range of crop biomass and crop or forage yield
+plt.uncertainty.ts.sediment.yield.py: plots annual time series for uncertainty range of sediment yield and soil erosion
+plt.uncertainty.ts.yields.py: plots annual time series for uncertainty range of crop or forage yield
+plt.uncertainty.glue_data.py: plots histogram and dist plot for likelihood as uncertainty analysis
+plt.calibration.ts.crop.yield.py: plots annual time series of crop or forage yield from calibration
+plt.uncertainty.ts.water.balance.py: plots time series of water balance components runoff, evapotranspiration, potential evapotranspiration, and deep percolation from uncertainty analysis
+plt.uncertainty.correlation.py: creates heatmap showing correlation between uncertainty parameters and metrics
+plt.calibration.ts.biomass.py: plots annual time series of crop biomass from calibration
+plt.calibration.sediment.runoff.py: creates bar plots of sediment yield based on runoff calibration
+plt.calibration.ts.monthly.runoff.py: generates monthly time series of runoff from calibration
+plt.calibration.boxplot.environmental.stress: plots time series and box plots of environment stress
+plt.uncertainty.glue.heatmap.py: generates heat map of year wise glue
+plt.uncertainty.bar.box.plot.deep.percolation_monthly.py: plots bar and box plots of deep percolation at monthly scale
+plt.plot.and.summarize.calibration.multi.attributes.py: summarize and plots the attributes
