@@ -1,4 +1,4 @@
-# <p = align="center"> pyAPEXSCU </p>
+# <p align="center"> pyAPEXSCU </p>
 ## Python Code for Calibrating, Senstiivy Analysis, and Uncertainty Analysis of Agriculture Policy Environmental Extender (APEX)
 -- py: Python Code
 -- APEX: Agriculture Policy Environmental Extender (APEX)
