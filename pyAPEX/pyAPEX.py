@@ -25,7 +25,7 @@ from Utility.overwrite_param import overwrite_param
 
 
 class inAPEX:
-    def __init__(self):
+    def __init__(self, scenario):
         """
         prog_dir: The location of the APEX simulation software.
         """
@@ -46,10 +46,11 @@ class inAPEX:
         self.list_file = 'APEXFILE.DAT'
         # self.param_file = f'{prog_dir}/APEXPARM.DAT'
         self.param_file = 'APEXPARM.DAT'
+        self.new_param_file = f'{scenario}_APEXPARM.DAT'
         # self.run_file = f'{prog_dir}/APEXRUN.DAT'
         self.run_file = 'APEXRUN.DAT'
-        # self.new_param_file = f'{prog_dir}/testAPEXPARM.DAT'
-        self.new_param_file = 'testAPEXPARM.DAT'
+        self.weather_file_list = 'WDLYLIST.DAT'
+        self.weather_file = 'WEATHER.DLY'
         self.file_observe = 'calibration_data.csv'
         self.get_run_name()
         self.get_control_period()
@@ -100,7 +101,7 @@ class inAPEX:
 
 
 class simAPEX:
-    def __init__(self, src_dir, winepath, in_obj, attribute, is_pesticide, scenario, warm_years, calib_years):
+    def __init__(self, src_dir, winepath, in_obj, attribute, is_pesticide, scenario, id_case, warm_years, calib_years):
         """
         src_dir: The location of the source repository for managing APEX runs.
         winepath: Path to an executable Wine container image.
@@ -113,10 +114,13 @@ class simAPEX:
 
         # create folder to save selected output attributes
         self.dir_output = os.path.join(os.path.split(os.getcwd())[0], f'Output_{scenario}')
+        self.weather_file = in_obj.weather_file
+        self.new_weather_file = os.path.join(os.path.abspath('../../CLIMATE'), f'{scenario}.dly')
         if os.path.exists(self.dir_output) is False:
             os.makedirs(self.dir_output)
         self.file_pem = os.path.join(self.dir_output, f'stats_{attribute}')
         # read calibrated parameter set
+        self.id_case = id_case
         self.read_param()
 
         self.n_params = len(self.param)
@@ -124,6 +128,7 @@ class simAPEX:
         self.p = self.param
         self.p = overwrite_param(in_obj.param_file, in_obj.new_param_file, self.p)
         modify_list(in_obj.list_file, in_obj.new_param_file)
+        self.copy_weather_file()
         t0 = datetime.now()
         print('Calling APEXgraze')
         if os.name == 'nt':
@@ -209,14 +214,21 @@ class simAPEX:
         df_param = pd.read_csv(self.cal_param_file, index_col=0, encoding="ISO-8859-1")
         self.param_description = df_param.columns.to_list()
         df_param_cal = df_param.iloc[:, 1:-1]
+        id_case = self.id_case-1
         self.df_param = df_param
         self.df_param_cal = df_param_cal
-        param = df_param_cal.iloc[0, :].values
-        param_id = df_param.iloc[0, 0]
-        param_info = df_param_cal.index[0]
+        param = df_param_cal.iloc[id_case, :].values
+        param_id = df_param.iloc[id_case, id_case]
+        param_info = df_param_cal.index[id_case]
         self.param = param
         self.param_id = param_id
         self.param_info = param_info
+        print(f'Current parameters based on {param_info}')
+        return self
+
+    def copy_weather_file(self):
+        shutil.copy2(self.new_weather_file, self.weather_file)
+        print(f'{self.weather_file} was replaced by {self.new_weather_file}')
         return self
 
     def copy_rename_file(self, curr_directory, extension):
