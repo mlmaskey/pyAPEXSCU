@@ -14,7 +14,7 @@
 ## File Structure
 * Main folder: **`pyAPEX`**
     * Preogram folder: `Program`
-      * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY, etc.
+      * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY`, etc.
       * Calibration data file: `calibration_data.csv.`  
       * APEX editor spreadsheet: `xlsAPPXgraze??.xlsm.`        
     * Utility folder: `Utility` contining utility files used in the pre and post analysis of parameters, statsistics
@@ -30,7 +30,8 @@
     * task_worker.py: Batch script used for jobs
     * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis
  * Notes:
-      * Replace the suitable version of APEX program in lines `147` and `150` of **pyAPEXSCU.** For example, replace `APEXgraze.exe` with `APEX1501.exe`
+      * Replace the suitable version of APEX program in lines `147` and `150` of **pyAPEXSCU.** For example, replace `APEXgraze.exe` with `APEX1501.exe.` 
+      * Also make sure suitable version of APEX model exists under the **Program**  folder
 ## Required Packages
    Before running, makes sure following packages are installed.
    * `numpy`
