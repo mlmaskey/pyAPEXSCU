@@ -76,6 +76,8 @@
    * Note: Before crating this file, convert the attrbutes a) sediment into lbs followed by kg and b) runoff in inches then in mm.
    
      Make sure, they are in lbs/area for sediment and runoff in rate unite like `cfs`, `cumec`
+**Command for calibration**
+`python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0`
 
 ### Senstivity analysis
 ### Uncertainty analysis
