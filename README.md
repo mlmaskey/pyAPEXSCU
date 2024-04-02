@@ -40,8 +40,8 @@
    * `random`
    * `os`
    * `datetime`
-   * `shutil
-   * `pathlib
+   * `shutil`
+   * `pathlib`
    * `configobj`
 ## Utilities
    * The folder `post_scripts` should be independent of the `pyAPEX` folder and includes scripts for post processing, including making graphs, summarizing tables and so on.
