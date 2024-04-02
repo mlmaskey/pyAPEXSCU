@@ -1,10 +1,10 @@
 # <p align="center"> pyAPEXSCU </p>
 ## Python Code for Calibrating, Senstiivy Analysis, and Uncertainty Analysis of Agriculture Policy Environmental Extender (APEX)
 -- py: Python Code
--- APEX: Agriculture Policy Environmental Extender (APEX)
--- S: Senstiivy Analysis
--- C: Calibration
--- U: Uncertainty Analysis
+-- **APEX**: Agriculture Policy Environmental Extender (**APEX**)
+-- **S**: Senstiivy Analysis
+-- **C**: Calibration
+-- **U**: Uncertainty Analysis
 
 **Authors**: *Mahesh Lal Maskey*, *Amanda M. Nelson*, *Haitao Huang*, and *Briain Stucky*
 
@@ -43,15 +43,15 @@
 ## Steps for (un) parallel computation
 ### Calibration
 #### Preparation of data for calibration
-   * Craate a blank csv file in **`Excel`** with name *Calibration_data.csv* and save under the **Program** folder inside **pyAPEX**
+   * Create a blank csv file in **`Excel`** with name *Calibration_data.csv* and save under the **Program** folder inside **pyAPEX**
    * The file has following columns: `Date`, `Year`, `Month`, `Day`, `sediment 1 (lbs)`, `sediment (kg)`, `runoff (in)`, `runoff (mm)`
      **Date:**                Calender dates
 
      **Year:**                Year of the date
      
-     **Month:**               Month of the date
+     **Month:**               Month of the year
      
-     **Day:**                 Day of the date
+     **Day:**                 Day of the month
      
      **sediment 1 (lbs):**    Sediment measured in lb if applicable; otherwise leave blank column at the outlet
      
