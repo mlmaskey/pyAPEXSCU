@@ -40,6 +40,29 @@
    * Copy `post_scripts` folder into the main project folder
 ## Steps for (un) parallel computation
 ### Calibration
+#### Preparation of data for calibration
+   * Craate a blank csv file in **`Excel`** with name *Calibration_data.csv* and save under the **Program** folder inside **pyAPEX**
+   * The file has following columns: `Date`, `Year`, `Month`, `Day`, `sediment 1 (lbs)`, `sediment (kg)`, `runoff (in)`, `runoff (mm)`
+     **Date:**                Calender dates
+
+     **Year:**                Year of the date
+     
+     **Month:**               Month of the date
+     
+     **Day:**                 Day of the date
+     
+     **sediment 1 (lbs):**    Sediment measured in lb if applicable; otherwise leave blank column at the outlet
+     
+     **sediment (kg):**       Sediment meaured or converted into kg
+     
+     **runoff (in):**         Runoff measured in inches at the outlet
+     
+     **runoff (mm):**         Runoff meaured or converted into mm
+
+   * Note: Before crating this file, convert the attrbutes a) sediment into lbs followed by kg and b) runoff in inches then in mm.
+   
+     Make sure, they are in lbs/area for sediment and runoff in rate unite like `cfs`, `cumec`
+
 ### Senstivity analysis
 ### Uncertainty analysis
 ### Usage of batch script
