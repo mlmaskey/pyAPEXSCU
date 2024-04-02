@@ -302,7 +302,11 @@ def get_daily_dws(run_name):
         # df1.index =  df1.Date
         # df1 = df1.drop(['Date'], axis=1)
 
-        df1 = pd.read_fwf(file, skiprows=2, encoding="ISO-8859-1", widths=[5, 4, 4] + [10] * 21)
+        # df1 = pd.read_fwf(file, skiprows=8, encoding="ISO-8859-1", widths=[5, 5, 3] + [10] * 21)
+        df1 = pd.read_fwf(file, skiprows=8, encoding="ISO-8859-1", widths=[5, 4, 4] + [12] * 32)
+        df1.Y = df1.Y.astype('int')
+        df1.M = df1.M.astype('int')
+        df1.D = df1.D.astype('int')
         df1.insert(3, "Date", df1.Y.astype('str') + '/' + df1.M.astype('str') + '/' + df1.D.astype('str'))
         df1.Date = pd.to_datetime(df1.Date)
         df1.index = df1.Date
@@ -311,6 +315,16 @@ def get_daily_dws(run_name):
         return df1
     except:
         raise Exception('error occurs in get_daily_dws')
+
+
+def get_date_index(df):
+    date_vec = []
+    for i in range(df.shape[0]):
+        date_ = pd.to_datetime(f'{df.M[i]}-{df.D[i]}-{df.Y[i]}')
+        date_ = pd.to_datetime(date_)
+        date_vec.append(date_)
+    df.index = date_vec
+    return df
 
 
 def get_daily_sadV0(run_name):
@@ -348,47 +362,12 @@ def get_daily_sad(run_name):
     try:
         # read SAD file from APEX run
         file = run_name + '.SAD'
-
-        # line_list = txt2list(file)   
-        # data_list = line_list[3:]
-        # header = line_list[2]
-        # header[-1] = 'Flag'
-        # df = pd.DataFrame (data_list)
-        # df.columns = header
-        # ndata = df.shape[0]
-        # df1 = df.copy()
-        # for j in range(ndata):
-        #     df_list = df1.iloc[j, :]
-        #     item_list = df_list.to_list()
-        #     nitems = len(item_list)
-        #     item_list_new = []
-        #     for i in range(nitems):
-        #         try:
-        #             item = item_list[i]
-        #             # print(i, item)
-        #             if ep.isfloat(item):
-        #                 item_list_new.append(item)
-        #             elif '*' in item:
-        #                 item_list_new.append(np.nan)
-        #                 item_list_new.append(np.nan)  
-        #             elif 'NaN' in item:
-        #                     item_list_new.append(item[0:3])
-        #                     item_list_new.append(item[3:])                
-        #             else:
-        #                 if len(item) > 6:
-        #                     item_list_new.append(item[0:6])
-        #                     item_list_new.append(item[6:])
-        #                 else:
-        #                     item_list_new.append(item)
-        #             # print(i, item_list_new[i])
-        #         except:
-        #             continue
-        #     df1.iloc[j, :]=item_list_new
-        # df1[df1=='NaN'] = np.nan
-
-        df1 = pd.read_fwf(file, skiprows=2, encoding="ISO-8859-1", widths=[9, 8, 5, 4, 4] + [10] * 58)
+        # df1 = pd.read_fwf(file, skiprows=2, encoding="ISO-8859-1", widths=[9, 8, 5, 4, 4] + [10] * 58)
+        df1 = pd.read_fwf(file, skiprows=9, encoding="ISO-8859-1", widths=[9, 8, 5, 4, 4] + [10] * 58)
         df1[df1 == 'NaN'] = np.nan
-        df1.rename(columns={df1.columns[-1]: "Flag"}, inplace=True)
+        # df1.rename(columns={df1.columns[-1]: "Flag"}, inplace=True)
+        df1.rename(columns={'#': "SA#"}, inplace=True)
+        # df1.rename(columns={df1.columns[-1]: "Flag"}, inplace=True)
 
         df1['SA#'] = df1['SA#'].astype('int')
         df1.ID = df1.ID.astype('int')
@@ -493,7 +472,7 @@ def get_acy(run_name):
         #     except: 
         #         continue 
 
-        df = pd.read_fwf(file, skiprows=2, encoding="ISO-8859-1", widths=[9, 8, 5, 5, 5] + [10] * 21)
+        df = pd.read_fwf(file, skiprows=8, encoding="ISO-8859-1", widths=[9, 8, 5, 5, 5] + [10] * 21)
 
         return df
     except:
@@ -555,7 +534,7 @@ def perf_eval(X, Y):
     return df.T
 
 
-def import_data(file_path, WA):
+def import_data_V1(file_path, WA):
     '''    Imports calibration data 
     Parameter: Complete file path of observed data 
                 & Watershed area for the conversion
@@ -585,6 +564,43 @@ def import_data(file_path, WA):
     df_monthly.insert(2, 'Day', df_monthly.index.day, True)
     df_monthly.columns = ['Year', 'Month', 'Day', 'sediment_lbs', 'sediment_kg', 'runoff_in', 'runoff_mm',
                           'sediment_t_ha', 'sediment_kg_ha']
+    return df_daily, df_monthly
+
+
+def import_data(file_path, WA):
+    '''    Imports calibration data 
+    Parameter: Complete file path of observed data 
+                & Watershed area for the conversion
+    returns: daily and monthly data sets
+    '''
+
+    df_observed_data = pd.read_csv(file_path)
+    df_observed_data.Date = df_observed_data.Year.astype('str') + '/' + df_observed_data.Month.astype(
+        'str') + '/' + df_observed_data.Day.astype('str')
+    df_observed_data.index = df_observed_data.Date
+    df_observed_data = df_observed_data.drop(['Date', 'Year', 'Month', 'Day'], 1)
+    df_observed_data.index = pd.to_datetime(df_observed_data.index)
+    if 'sediment (kg)' in df_observed_data.columns:
+        df_observed_data.insert(len(df_observed_data.columns), "sediment_t_ha",
+                                df_observed_data['sediment (kg)'] * 0.001 / WA, True)
+        df_observed_data.insert(len(df_observed_data.columns), "sediment_kg_ha", df_observed_data['sediment (kg)'] / WA,
+                                True)
+    df_monthly = df_observed_data.resample('M').sum()
+    df_daily = df_observed_data.copy()
+    df_daily.insert(0, 'Year', df_daily.index.year, True)
+    df_daily.insert(1, 'Month', df_daily.index.month, True)
+    df_daily.insert(2, 'Day', df_daily.index.day, True)
+    df_monthly.insert(0, 'Year', df_monthly.index.year, True)
+    df_monthly.insert(1, 'Month', df_monthly.index.month, True)
+    df_monthly.insert(2, 'Day', df_monthly.index.day, True)
+    if 'sediment (kg)' in df_observed_data.columns:
+        df_daily.columns = ['Year', 'Month', 'Day', 'sediment_lbs', 'sediment_kg', 'runoff_in', 'runoff_mm',
+                            'sediment_t_ha', 'sediment_kg_ha']
+        df_monthly.columns = ['Year', 'Month', 'Day', 'sediment_lbs', 'sediment_kg', 'runoff_in', 'runoff_mm',
+                              'sediment_t_ha', 'sediment_kg_ha']
+    else:
+        df_daily.columns = ['Year', 'Month', 'Day', 'sediment_lbs', 'sediment_kg', 'runoff_in', 'runoff_mm']
+        df_monthly.columns = ['Year', 'Month', 'Day', 'sediment_lbs', 'sediment_kg', 'runoff_in', 'runoff_mm']
     return df_daily, df_monthly
 
 
