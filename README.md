@@ -34,7 +34,7 @@
 ## Required Packages
    Before running, makes sure following packages are installed.
    * `numpy`
-   * `pandas
+   * `pandas`
    * `fortranformat`
    * `subprocess`
    * `random`
