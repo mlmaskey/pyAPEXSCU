@@ -6,6 +6,7 @@ an ID range that uniquely identifies these model runs from the model runs in
 all other Slurm tasks.
 
 @author: Brian Stucky (USDA), Mahesh.Maskey
+python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0
 """
 import os
 import os.path
@@ -48,7 +49,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--id_mode', type=int, required=True,
-    help='Type of simulation.'    
+    help='Type of simulation. : 0: Calibration, 1:Sensitivity, 2: Uncertainty'    
 )
 
 args = parser.parse_args()
