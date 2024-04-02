@@ -29,6 +29,8 @@
     * sensitivity_analysis.py: Calls `Python` script `pySAAPEX.py` for sensitivity analysis 
     * task_worker.py: Batch script used for jobs
     * uncertainty_analysis.py: Calls `Python` script `pyUAAPEX.py` for uncertainty analysis
+ * Notes:
+      * Replace the suitable version of APEX program in lines `147` and `150` of **pyAPEXSCU.** For example, replace `APEXgraze.exe` with `APEX1501.exe`
 ## Utilities
    * The folder `post_scripts` should be independent of the `pyAPEX` folder and includes scripts for post processing, including making graphs, summarizing tables and so on.
    * If there is single project you cam merge these scripts with main folder `pyAPEX.` Otherwise, it is suggested to put in outside the project folder.
