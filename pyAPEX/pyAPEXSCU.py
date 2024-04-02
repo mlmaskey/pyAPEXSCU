@@ -9,14 +9,12 @@ import pandas as pd
 import numpy as np
 import subprocess
 import random
-import fortranformat as ff
 from Utility.apex_utility import read_sensitive_params, copy_rename_file, get_scanario_name
 from Utility.apex_utility import modify_list
 from Utility.apex_utility import get_acy
 from Utility.apex_utility import get_daily_sad
 from Utility.apex_utility import get_daily_dps
 from Utility.apex_utility import get_daily_dws
-from Utility.apex_utility import read_param_file
 from Utility.overwrite_param import overwrite_param
 from Utility.apex_utility import savedata_rel1
 from Utility.apex_utility import organize2save
@@ -28,10 +26,7 @@ from datetime import datetime
 
 
 class simAPEX:
-    def __init__(
-            self, config, src_dir, winepath, in_obj, model_mode, scale=None,
-            isall=True
-    ):
+    def __init__(self, config, src_dir, winepath, in_obj, model_mode, scale=None, isall=True):
         """
         self.config: A configuration object.
         src_dir: The location of the source repository for managing APEX runs.
@@ -42,6 +37,7 @@ class simAPEX:
         self.src_dir = src_dir
         self.winepath = winepath
         self.run_name = self.config['run_name']
+        self.attribute = self.config['attribute']
         self.file_limits = self.src_dir / 'Utility' / self.config['file_limits']
 
         self.dir_calibration = in_obj.dir_calibration
@@ -52,9 +48,9 @@ class simAPEX:
         self.uncertainty_outflie = os.path.join(self.dir_uncertainty, 'Output_summary.txt')
 
         self.get_range()
-        if (model_mode == "calibration"):
+        if model_mode == "calibration":
             n_discrete = int(self.config['n_discrete'])
-            n_simul = int(self.config['n_simulation'])
+            # n_simul = int(self.config['n_simulation'])
             self.generate_param_set(n_discrete, isall)
         else:
             dir_res = self.config['dir_calibrate_res']
@@ -66,7 +62,7 @@ class simAPEX:
             # reads the parameter file from the calibration results
             self.file_parm = dir_res + '/' + file_parm
             self.read_params()
-            if (model_mode == "sensitivity"):
+            if model_mode == "sensitivity":
                 # file for basic info
                 if os.path.exists(self.dir_sensitivity) is False:
                     os.makedirs(self.dir_sensitivity)
@@ -74,7 +70,7 @@ class simAPEX:
                 f.close()
                 self.get_best4sa(scale='daily')
                 self.generate_sensitive_params(isall)
-            elif (model_mode == "uncertainty"):
+            elif model_mode == "uncertainty":
                 if os.path.exists(self.dir_uncertainty) is False:
                     os.makedirs(self.dir_uncertainty)
                 f = open(self.uncertainty_outflie, 'w')
@@ -92,24 +88,27 @@ class simAPEX:
                     'CODMV', 'RMSEMV', 'NRMSEMV', 'NSEMV', 'PBIASMV', 'IOAMV', 'OF1MV', 'OF2MV',
                     'CODAY', 'RMSEAY', 'NRMSEAY', 'NSEAY', 'PBIASAY', 'IOAAY', 'OF1AY', 'OF2AY',
                     'CODYC', 'RMSEYC', 'NRMSEYC', 'NSEYC', 'PBIASYC', 'IOAYC', 'OF1YC', 'OF2YC',
-                    'CODYV', 'RMSEYV', 'NRMSEYV', 'NSEYV', 'PBIASYV',  'IOAYV', 'OF1YV', 'OF2YV']
-        if (model_mode == "calibration"):
-
+                    'CODYV', 'RMSEYV', 'RAMSEY', 'NSEYV', 'PBIASYV', 'IOAYV', 'OF1YV', 'OF2YV']
+        if model_mode == "calibration":
             id_start = int(self.config['n_start'])
             n_simul = int(self.config['n_simulation'])
         else:
-            id_start = int(self.config['n_start'])
+            # id_start = int(self.config['n_start'])
             id_start = 0
             n_simul = self.parameters_matrix.shape[0]
 
         self.assign_output_df()
-        if (model_mode == "calibration"):
-            df_PEM_runoff, df_PEM_sediment_YSD, df_PEM_sediment_USLE = pd.DataFrame(columns=self.pem), pd.DataFrame(
-                columns=self.pem), pd.DataFrame(columns=self.pem)
-            df_PEM_sediment_MUSL, df_PEM_sediment_REMX, df_PEM_sediment_MUSS = pd.DataFrame(
-                columns=self.pem), pd.DataFrame(columns=self.pem), pd.DataFrame(columns=self.pem)
-            df_PEM_sediment_MUST, df_PEM_sediment_RUS2, df_PEM_sediment_RUSL = pd.DataFrame(
-                columns=self.pem), pd.DataFrame(columns=self.pem), pd.DataFrame(columns=self.pem)
+        if model_mode == "calibration":
+            df_PEM_runoff = pd.DataFrame(columns=self.pem)
+            if self.attribute == 'sediment':
+                df_PEM_sediment_YSD = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_USLE = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUSL = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_REMX = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUSS = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUST = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_RUS2 = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_RUSL = pd.DataFrame(columns=self.pem)
             self.df_p_set = pd.DataFrame()
         else:
             if 'RunId' in self.df_calpem_sets:
@@ -118,19 +117,22 @@ class simAPEX:
                 df_PEM_runoff = df_PEM_runoff.drop(['RunId'], axis=1)
             else:
                 df_PEM_runoff = pd.DataFrame(self.df_calpem_sets).T
-            df_PEM_sediment_YSD, df_PEM_sediment_USLE = pd.DataFrame(columns=self.pem), pd.DataFrame(columns=self.pem)
-            df_PEM_sediment_MUSL, df_PEM_sediment_REMX, df_PEM_sediment_MUSS = pd.DataFrame(
-                columns=self.pem), pd.DataFrame(columns=self.pem), pd.DataFrame(columns=self.pem)
-            df_PEM_sediment_MUST, df_PEM_sediment_RUS2, df_PEM_sediment_RUSL = pd.DataFrame(
-                columns=self.pem), pd.DataFrame(columns=self.pem), pd.DataFrame(columns=self.pem)
-
+            if self.attribute == 'sediment':
+                df_PEM_sediment_YSD = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_USLE = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUSL = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_REMX = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUSS = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_MUST = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_RUS2 = pd.DataFrame(columns=self.pem)
+                df_PEM_sediment_RUSL = pd.DataFrame(columns=self.pem)
             self.df_p_set = self.pbest
         # start simulation 
         t0 = datetime.now()
         for i in range(id_start, n_simul):
             try:
                 t1 = datetime.now()
-                if (model_mode == "calibration"):
+                if model_mode == "calibration":
                     if isall:
                         self.pick_param(allparam=True, i=i)
                     else:
@@ -142,18 +144,18 @@ class simAPEX:
                 modify_list(in_obj.list_file, in_obj.simparam_file)
 
                 t2 = datetime.now()
-                print('Calling APEXgraze')
+                print('Calling ')
                 if os.name == 'nt':
-                    p = subprocess.run(['APEXgraze.exe'], capture_output=True, text=True)
+                    p = subprocess.run(['APEX1501.exe'], capture_output=True, text=True)
                     print(p.stdout)
                 else:
-                    p = subprocess.run([self.winepath, 'APEXgraze.exe'], capture_output=True, text=True)
+                    p = subprocess.run([self.winepath, 'APEX1501.exe'], capture_output=True, text=True)
                     print(p.stderr)
                     print(p.stdout)
                 # Read run name from APEXRUN.DAT file
                 curr_directory = os.getcwd()
                 self.scenario_name = get_scanario_name(curr_directory)
-                #Saving standard output file together with runs for final summary
+                # Saving standard output file together with runs for final summary
                 copy_rename_file(curr_directory, self.scenario_name, itr_id=i, extension='OUT', in_obj=in_obj,
                                  model_mode=model_mode)
 
@@ -163,64 +165,66 @@ class simAPEX:
                 modify_list(in_obj.list_file, in_obj.param_file)
                 df_SAD = get_daily_sad(self.run_name)
                 df_SAD = calculate_nutrients(df_SAD)
-                df_DPS = get_daily_dps(self.run_name)
                 df_DWS = get_daily_dws(self.run_name)
                 df_annual = get_acy(self.run_name)
                 is_pesticide = self.config['is_pesticide']
                 warm_years = int(self.config['warm_years'])
                 calib_years = int(self.config['calib_years'])
+                # model evaluation
                 print('Saving model performance statistics')
-                df_PEM_runoff = do_validate_fill(model_mode, df_SAD, df_PEM_runoff, in_obj, 'WYLD', 'runoff', i,
+                df_PEM_runoff = do_validate_fill(model_mode, df_DWS, df_PEM_runoff, in_obj, 'WYLD', 'runoff', i,
                                                  warm_years, calib_years)
-                if is_pesticide:
+                if (self.attribute == 'sediment') & (is_pesticide == 'TRUE'):
+                    df_DPS = get_daily_dps(self.run_name)
+                    df_outlet['YSD'] = df_DPS['YSD']
                     df_PEM_sediment_YSD = do_validate_fill(model_mode, df_DPS, df_PEM_sediment_YSD, in_obj, 'YSD',
                                                            'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_USLE = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_USLE, in_obj, 'USLE',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_MUSL = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUSL, in_obj, 'MUSL',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_REMX = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_REMX, in_obj, 'REMX',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_MUSS = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUSS, in_obj, 'MUSS',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_MUST = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUST, in_obj, 'MUST',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_RUS2 = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_RUS2, in_obj, 'RUS2',
-                                                        'sediment', i, warm_years, calib_years)
-                df_PEM_sediment_RUSL = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_RUSL, in_obj, 'RUSL',
-                                                        'sediment', i, warm_years, calib_years)
-                file_outlet = 'daily_outlet_' + str(i + 1).zfill(7) + '.csv'
-                df_outlet = df_DWS[['Y', 'M', 'D', 'RFV', 'WYLD', 'TMX', 'TMN', 'PET', 'Q', 'CN',
-                                    'SSF', 'PRK', 'IRGA', 'USLE', 'MUSL', 'REMX',
-                                    'MUSS', 'MUST', 'RUS2', 'RUSL']]
-                if is_pesticide:
-                    df_outlet['YSD'] = df_DPS['YSD']
+                if self.attribute == 'sediment':
+                    df_PEM_sediment_USLE = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_USLE, in_obj, 'USLE',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_MUSL = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUSL, in_obj, 'MUSL',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_REMX = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_REMX, in_obj, 'REMX',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_MUSS = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUSS, in_obj, 'MUSS',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_MUST = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_MUST, in_obj, 'MUST',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_RUS2 = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_RUS2, in_obj, 'RUS2',
+                                                            'sediment', i, warm_years, calib_years)
+                    df_PEM_sediment_RUSL = do_validate_fill(model_mode, df_SAD, df_PEM_sediment_RUSL, in_obj, 'RUSL',
+                                                            'sediment', i, warm_years, calib_years)
+                file_outlet = 'daily_outlet_' + str(i + 1).zfill(7)
+                # df_outlet = df_DWS[['Y', 'M', 'D', 'RFV', 'WYLD', 'TMX', 'TMN', 'PET', 'Q', 'CN',  'SSF', 'PRK',
+                #                   'IRGA', 'USLE', 'MUSL', 'REMX', 'MUSS', 'MUST', 'RUS2', 'RUSL']]
+                df_outlet = df_DWS
                 savedata_rel1(df_outlet, file_outlet, model_mode, in_obj)
-
-                file_basin = 'daily_basin_' + str(i + 1).zfill(7) + '.csv'
-                df_basin = df_SAD[['Y', 'M', 'D', 'CPNM', 'LAI', 'BIOM', 'STL',
-                                   'STD', 'STDL', 'PRCP', 'WYLD', 'TMX', 'TMN',
-                                   'PET', 'ET', 'Q', 'CN', 'SSF', 'PRK', 'QDR',
-                                   'IRGA', 'USLE', 'MUSL', 'REMX', 'MUSS', 'MUST',
-                                   'RUS2', 'RUSL', 'YN', 'YP', 'QN', 'QP', 'QDRN',
-                                   'QPRP', 'SSFN', 'RSFN', 'QRFN', 'QRFP', 'QDRP',
-                                   'DPRK', 'TN', 'TP']]
+                del df_outlet, file_outlet
+                file_basin = 'daily_basin_' + str(i + 1).zfill(7)
+                # df_basin = df_SAD[['Y', 'M', 'D', 'CPNM', 'LAI', 'BIOM', 'STL', 'STD',  'PET', 'STDL', 'PRCP','WYLD',
+                #                    'TMX', 'TMN',  'ET', 'Q', 'CN', 'SSF', 'PRK', 'QDR', 'IRGA', 'USLE', 'MUSL',
+                #                    'REMX', 'MUSS', 'MUST',  'RUS2', 'RUSL', 'YN', 'YP', 'QN', 'QP', 'QDRN', 'QPRP',
+                #                    'SSFN', 'RSFN', 'QRFN', 'QRFP', 'QDRP', 'DPRK', 'TN', 'TP']]
+                # savedata_rel1(df_basin, file_basin, model_mode, in_obj)
+                df_basin = df_SAD
                 savedata_rel1(df_basin, file_basin, model_mode, in_obj)
-
-                file_annual = 'annual_' + str(i + 1).zfill(7) + '.csv'
+                del df_basin, file_basin
+                file_annual = 'annual_' + str(i + 1).zfill(7)
                 df_year = df_annual[['YR', 'CPNM', 'YLDG', 'YLDF', 'BIOM', 'WS',
                                      'NS', 'PS', 'TS', 'AS', 'SS']]
                 savedata_rel1(df_year, file_annual, model_mode, in_obj)
-
+                del df_year, file_annual
                 crops = df_basin.CPNM.unique()
                 if len(crops) > 1:
                     for cp in crops:
-                        file_basin = 'daily_basin_' + str(i + 1).zfill(7) + '_' + cp + '.csv'
+                        file_basin = 'daily_basin_' + str(i + 1).zfill(7) + '_' + cp
                         df_basin_c = df_basin[df_basin['CPNM'] == cp]
                         savedata_rel1(df_basin_c, file_basin, model_mode, in_obj)
-                        file_annual = 'annual_' + str(i + 1).zfill(7) + '_' + cp + '.csv'
+                        del df_basin_c, file_basin
+                        file_annual = 'annual_' + str(i + 1).zfill(7) + '_' + cp
                         df_year_c = df_year[df_year['CPNM'] == cp]
                         savedata_rel1(df_year_c, file_annual, model_mode, in_obj)
+                        del df_year_c, file_annual
 
                 df_p = pd.DataFrame(self.p)
                 df_p = df_p.T
@@ -229,8 +233,10 @@ class simAPEX:
                     self.df_p_set.index = self.df_p_set.RunId.values
                     self.df_p_set = self.df_p_set.drop(['RunId'], axis=1)
                 self.df_p_set = organize2save(self.df_p_set, df_p, i, axis=0)
-                print('Saving parmeters in APEXPARM.DAT')
-                savedata_rel1(self.df_p_set, 'APEXPARM', model_mode, in_obj)
+                # print('Saving parameters in APEXPARM.DAT')
+                print('Saving parameters in PARM1501.DAT')
+                # savedata_rel1(self.df_p_set, 'APEXPARM', model_mode, in_obj)
+                savedata_rel1(self.df_p_set, 'PARM1501', model_mode, in_obj)
                 print('Parameters')
                 print(self.p)
                 print('---------------------------------------------------------------')
@@ -266,7 +272,7 @@ class simAPEX:
             best_value, id_run, best_stats = ap.find_best(stats_out[3], metric='OF2YC', stats='min')
             _, _, self.df_calpem_sets = ap.find_best(stats_out[4], metric='OF2YC', stats='min')
         df_pem_criteria = stats_out[0]
-        df_pem_criteria.to_csv(f'{self.dir_sensitivity}/selected_Statistcs_runoff.csv')
+        df_pem_criteria.to_csv(f'{self.dir_sensitivity}/selected_Statistics_runoff.csv')
         run_vec = df_pem_criteria.RunId
         df_stats_daily = stats_out[1]
         df_stats_monthly = stats_out[2]

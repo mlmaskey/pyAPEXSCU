@@ -20,8 +20,9 @@ class inAPEX:
         # Specify the paths for all required input files.
         self.control_file = prog_dir / 'APEXCONT.DAT'
         self.list_file = prog_dir / 'APEXFILE.DAT'
-        self.param_file = prog_dir / 'APEXPARM.DAT'
-        self.simparam_file = prog_dir / 'simAPEXPARM.DAT'        
+        # self.param_file = prog_dir / 'APEXPARM.DAT'
+        self.param_file = prog_dir / 'PARM1501.DAT'
+        self.simparam_file = prog_dir / 'simAPEXPARM.DAT'
         self.file_observe = prog_dir / config['file_observe']
         self.sim_id_range = f'_{(config["n_start"] + 1):07}-{(config["n_simulation"]):07}'
         self.dir_calibration = prog_dir.parent / (config['dir_calibration'] + self.sim_id_range)

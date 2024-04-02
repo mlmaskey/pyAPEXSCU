@@ -6,7 +6,6 @@ an ID range that uniquely identifies these model runs from the model runs in
 all other Slurm tasks.
 
 @author: Brian Stucky (USDA), Mahesh.Maskey
-python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0
 """
 import os
 import os.path
@@ -14,11 +13,11 @@ from pathlib import Path
 import shutil
 import argparse
 from pyAPEXin import inAPEX
-# from pyAPEXSCU import simAPEX
 from pyAPEXSCU import simAPEX
 from configobj import ConfigObj
 import numpy as np
-
+# python task_worker.py --ntasks=1 --nsims=2000 --taskidmin=1 --taskid=1 --simidstart=1
+# --outputdir=D:\Maskey\Project\NCAAR\AWARA\Calibration --winepath=None --id_mode=0
 print('\014')
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -49,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--id_mode', type=int, required=True,
-    help='Type of simulation. : 0: Calibration, 1:Sensitivity, 2: Uncertainty'    
+    help='Type of simulation.'    
 )
 
 args = parser.parse_args()
