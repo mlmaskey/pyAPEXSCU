@@ -14,7 +14,7 @@
 ## File Structure
 * Main folder: **`pyAPEX`**
     * Preogram folder: `Program`
-      * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY, etc.
+      * Default input files made for APEX program `APEXgraze.exe,`  containing `*.DAT`, `*.SIT`, `*.SUB`, `*.mgt`, `*.sol`, `*.WND`, `*.WPM`, `*.DLY`, etc.
       * Calibration data file: `calibration_data.csv.`  
       * APEX editor spreadsheet: `xlsAPPXgraze??.xlsm.`        
     * Utility folder: `Utility` contining utility files used in the pre and post analysis of parameters, statsistics
@@ -52,11 +52,26 @@
    * Create sub folders for each scenarios inside `SITE#` folder, e.g., 'pyAPEX_scn1`, 'pyAPEX_scn2`, ...
    * Copy main folder **`pyAPEX`** into each scenario folder simulatenously
    * Copy `post_scripts` folder into the main project folder
+# Generic steps
+   *  Create a project folder **APEX_project** or desired name.
+   *  Download **`pyAPEX`** and unzip to the project folder
+   *  Make sure **`pyAPEX`** folder has sub folders a) *`Utility`*, b) *`Program`* and c) *`Output [optional]`*
+   *  Also make sure **`pyAPEX`** folder contains `calibration.py`, `load_module.sh`, `pyAPEXSCU.py`, `pyAPEXin.py`, `pyCALAPEX.py`, `pySAAPEX.py`, `pyUAAPEX.py`, `runtime.ini`, `sensitivity_analysis.py`, `task_worker.py`, and `uncertainty_analysis.py`
+   *  Change the parameters in the **`runtime.ini`** as desired.
+   *  Copy all the input and output files into **`Program`** folder, including desired version of the APEX model after setting up and preliminary run.
+   *  Copy **Calibration_data.csv** file (see below) under **`Program`** folder for calibration
+   *  If you are using command-line, us the following syantax
+
+      `python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0`
+      
+   where `ntasks`, `taskidmin`, and `taskid`  are used for paralle computation; `nsims` is the number of simulation;  `simidstart` is the start of simulation to be saved; `outputdir` is the path of output directory; `winepath` is pathof wine for paralle computation; and `id_mode` varies from 0 to 2 impying 0 for *calibration*, 1 for *sensitivity analysis*, and and 2 for *uncertainty analysis*
+
 ## Steps for (un) parallel computation
 ### Calibration
 #### Preparation of data for calibration
    * Create a blank csv file in **`Excel`** with name *Calibration_data.csv* and save under the **Program** folder inside **pyAPEX**
    * The file has following columns: `Date`, `Year`, `Month`, `Day`, `sediment 1 (lbs)`, `sediment (kg)`, `runoff (in)`, `runoff (mm)`
+     
      **Date:**                Calender dates
 
      **Year:**                Year of the date
@@ -76,8 +91,7 @@
    * Note: Before crating this file, convert the attrbutes a) sediment into lbs followed by kg and b) runoff in inches then in mm.
    
      Make sure, they are in lbs/area for sediment and runoff in rate unite like `cfs`, `cumec`
-**Command for calibration**
-`python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0`
+
 
 ### Senstivity analysis
 ### Uncertainty analysis
