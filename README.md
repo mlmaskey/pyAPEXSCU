@@ -53,6 +53,19 @@
    * Create sub folders for each scenarios inside `SITE#` folder, e.g., 'pyAPEX_scn1`, 'pyAPEX_scn2`, ...
    * Copy main folder **`pyAPEX`** into each scenario folder simulatenously
    * Copy `post_scripts` folder into the main project folder
+# Generic steps
+   *  Create a project folder **APEX_project** or desired name.
+   *  Download **`pyAPEX`** and unzip to the project folder
+   *  Make sure **`pyAPEX`** folder has sub folders a) *`Utility`*, b) *`Program`* and c) *`Output [optional]`*
+   *  Also make sure **`pyAPEX`** folder contains `calibration.py`, `load_module.sh`, `pyAPEXSCU.py`, `pyAPEXin.py`, `pyCALAPEX.py`, `pySAAPEX.py`, `pyUAAPEX.py`, `runtime.ini`, `sensitivity_analysis.py`, `task_worker.py`, and `uncertainty_analysis.py`
+   *  Change the parameters in the **`runtime.ini`** as desired.
+   *  Copy all the input and output files into **`Program`** folder, including desired version of the APEX model after setting up and preliminary run.
+   *  Copy **Calibration_data.csv** file (see below) under **`Program`** folder for calibration
+   *  If you are using command-line, us the following syantax
+
+      `python task_worker.py --ntasks=1  --nsims=20000 --taskidmin=1 --taskid=1 --simidstart=1 --outputdir=path/to/output/ --winepath=None --id_mode=0`
+      
+   where `ntasks`, `taskidmin`, and `taskid`  are used for paralle computation; `nsims` is the number of simulation;  `simidstart` is the start of simulation to be saved; `outputdir` is the path of output directory; `winepath` is pathof wine for paralle computation; and `id_mode` varies from 0 to 2 impying 0 for *calibration*, 1 for *sensitivity analysis*, and and 2 for *uncertainty analysis*
 ## Steps for (un) parallel computation
 ### Calibration
 #### Preparation of data for calibration
